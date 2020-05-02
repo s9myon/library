@@ -8,3 +8,22 @@
 .done {
     text-decoration: line-through;
 }
+
+.App {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+
+#root::after {
+    background-image: linear-gradient(45deg, #38ef7d,#11998e);
+    content: "";
+    display: block;
+    height: 100%;
+    left: 0;
+    position: absolute;
+    z-index: -2;
+    top: 0;
+    width: 100%;
+  }

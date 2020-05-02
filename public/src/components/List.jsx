@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import BookPosition from './BookPosition'
+import BookPosition from './BookPosition/BookPosition'
 
 const styles = {
     ul: {

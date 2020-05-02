@@ -1,7 +1,7 @@
 import React from 'react';
 import MainScreen from './MainScreen';
-import Registr from './Registr';
-import Auth from './Auth';
+import Registr from './Registr/Registr';
+import Auth from './Auth/Auth';
 import Server from '../Server';
 
 class Container extends React.Component {
@@ -18,8 +18,6 @@ class Container extends React.Component {
             registr: false,
             books: this.books
         }
-        // эта привязка объязательна для доступа к 'this' в коллбэке
-        this.onToggle = this.onToggle.bind(this);
     }
 
     setAuthState(val) {
@@ -51,7 +49,7 @@ class Container extends React.Component {
                     this.state.auth ? <Auth /> : 
                         <MainScreen
                             books = { this.books }
-                            onToggle = { this.onToggle }/>
+                            onToggle = { () => this.onToggle() }/>
                 }
             </div>
         );
