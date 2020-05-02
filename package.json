@@ -1,0 +1,9 @@
+{
+    "name": "library_service",
+    "version": "1.0.0",
+    "dependencies": {
+        "express": "latest",
+        "md5": "^2.2.1",
+        "sqlite3": "latest"
+    }
+}
