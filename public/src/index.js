@@ -1,7 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Container from './components/Container';
-import './index.css';
+import App from './App.js';
+import './index.scss';
+import 'materialize-css';
 
 
-ReactDOM.render(<Container />, document.getElementById('root'));
+ReactDOM.render(<App />, document.getElementById('root'));
