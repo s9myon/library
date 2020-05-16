@@ -20,7 +20,8 @@ class UserManager extends BaseManager {
 
     // EVENTS
     async disconnect(data) {
-        let user = this.getUserByToken(data);
+        let { token } = data;
+        let user = this.getUserByToken(token);
         if (user) {
             // обнулить токен
             await this.db.setToken(null, user.email);
@@ -28,8 +29,8 @@ class UserManager extends BaseManager {
             delete this.users[user.id];
         }
     }
-    // TRIGGERS
 
+    // TRIGGERS
     getUserByToken(data = {}) {
         if (data.token) {
             for (let id in this.users) {
@@ -53,18 +54,15 @@ class UserManager extends BaseManager {
     }
 
     // LOGIC
-
     async userLogout(data = {}) {
         // вызвать все подписанные события
-        this.mediator.call(this.EVENTS.LOGOUT, data);
+        await this.mediator.call(this.EVENTS.LOGOUT, data);
         return true;
     }
 
     async userLogin(data = {}) {
         const { email, hash, random } = data;
-
         let user;
-        
         if (email && hash && random) {
             user = await this.db.getUserByEmail(email);
             if(user) {
@@ -75,18 +73,17 @@ class UserManager extends BaseManager {
                     await this.db.setToken(token, email);
                     user.token = token;
                     this.users[user.id] = new User(user);
-
-                    return true;
+                    return user;
                 }
             }
         }
-        return false;
+        return null;
     }
 
     async userRegistration(data = {}) {
         const { email, hash, name } = data;
         if (email && hash && name) {
-            if (await this.db.getUserByEmail(name)) {
+            if (await this.db.getUserByEmail(email)) {
                 // если уже существует такой пользователь
                 return false;
             } else {

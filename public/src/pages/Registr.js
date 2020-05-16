@@ -1,25 +1,28 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
 import md5 from 'md5';
 import { useHttp } from '../hooks/http.hook';
+import {useMessage} from '../hooks/message.hook';
 
 export function Registr(){
-    const { loading, request } = useHttp();
+    const history = useHistory();
+    const message = useMessage();
+    const { loading, error, request, setError, clearError } = useHttp();
     const [form, setForm] = useState({
         email: '', password1: '', password2: '', name: ''
     });
+
+    // вызывает колбек когда изменяется error
+    useEffect(() => {
+        message(error);
+        clearError();
+    }, [error, message, clearError]);
 
     function changeHandler(event) {
         setForm({ ...form, [event.target.name]: event.target.value });
     }
 
     async function registerHandler() {
-        // const login = document.querySelector('#loginRegistr').value;
-        // const password = document.querySelector('#passwordRegistr').value;
-        // const name = document.querySelector('#nameRegistr').value;
-        // if (login && password && name) {
-        //     let hash = md5(password + login);
-        //     socket.emit(this.MESSAGES.USER_REGISTRATION, { login, hash, name });
-        // }
         try {
             const { email, password1, password2, name } = form;
             if (email && password1 && password2 && name) {
@@ -27,15 +30,13 @@ export function Registr(){
                     let hash = md5(email + password1);
                     const data = await request('/register', 'POST', { email: email, hash: hash, name: name });
                     console.log('Data', data);
+                    history.push("/");
                 } else {
-                    console.log('Введите одинаковые пароли');
+                    setError('Введите одинаковые пароли');
                 }
             } else {
-                console.log('Заполните все поля');
+                setError('Заполните все поля');
             }
-            
-            // const data = await request('/register', 'POST', {...form});
-            // console.log('Data', data);
         } catch (e) {
 
         }

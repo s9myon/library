@@ -8,7 +8,7 @@ export function Search() {
     }
 
     return (
-        <div class="form-inline">
+        <div className="form-inline">
             <input
                 type="text"
                 className="form-control mb-2 mr-sm-2"

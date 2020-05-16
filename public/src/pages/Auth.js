@@ -1,31 +1,43 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
+import md5 from 'md5';
 import { useHttp } from '../hooks/http.hook';
+import { useMessage } from '../hooks/message.hook';
+import { AuthContext } from '../context/auth.context';
 
 export function Auth(){
-    const { loading, request } = useHttp();
+    // в auth сохранён контекст AuthContext
+    const auth = useContext(AuthContext);
+    const message = useMessage();
+    const { loading, error, request, setError, clearError } = useHttp();
     const [form, setForm] = useState({
-        email: '', hash: ''
+        email: '', password: ''
     });
+
+    useEffect(() => {
+        message(error);
+        clearError();
+    }, [error, message, clearError]);
 
     function changeHandler(event) {
         setForm({ ...form, [event.target.name]: event.target.value });
     }
 
-    // async function registerHandler() {
-    //     // const login = document.querySelector('#loginRegistr').value;
-    //     // const password = document.querySelector('#passwordRegistr').value;
-    //     // const name = document.querySelector('#nameRegistr').value;
-    //     // if (login && password && name) {
-    //     //     let hash = md5(password + login);
-    //     //     socket.emit(this.MESSAGES.USER_REGISTRATION, { login, hash, name });
-    //     // }
-    //     try {
-    //         const data = await request('/register', 'POST', {...form});
-    //         console.log('Data', data);
-    //     } catch (e) {
+    async function loginHandler() {
+        try {
+            const { email, password } = form;
+            if (email && password) {
+                const random = Math.random();
+                const hash = md5(md5(email + password) + random);
+                const result = await request('/login', 'POST', { email: email, hash: hash, random: random });
+                console.log('Data', result.data);
+                auth.login(result.data.id, result.data.token);
+            } else {
+                setError('Заполните все поля');
+            }
+        } catch (e) {
 
-    //     }
-    // }
+        }
+    }
 
     return (
         <div className="login-form">
@@ -53,6 +65,7 @@ export function Auth(){
                     className="orange darken-1 waves-effect waves-light btn"
                     value="Войти"
                     type="button"
+                    onClick={loginHandler}
                     disabled={loading} />
             </div>
             <div className="center-align">

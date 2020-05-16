@@ -6,59 +6,73 @@ function Router({ mediator, TRIGGERS }) {
 
     router.get('/test', test);
     router.post('/login', login);
+    router.post('/logout', logout);
     router.post('/register', registration);
+    router.all('/*', defaultHandler);
 
-    
+    // constructors
+    const BaseRouter = require("./BaseRouter");
+    // instance
+    const baseRouter = new BaseRouter();
+
+    // test
     function test(req, res) {
         res.send({ answer: 'Hello world' });
     }
 
+    // login
     async function login(req, res) {
         try {
-
             const { email, hash, random } = req.body;
 
             let result = await mediator.get(TRIGGERS.USER_LOGIN, { email, hash, random });
-        
+            
+            const { id, name, token } = result;
+            
             if (result) {
-                res.status(200).json({
-                    message: 'Вход выполнен'
-                });
+                res.send(baseRouter.answer({ id, name, email, token }));
             } else {
-                res.status(412).json({
-                    message: 'Неверный пароль или email, попробуйте снова'
-                })
+                res.send(baseRouter.error(400));
             }
         } catch (e) {
-            res.status(500).json({
-                message: 'Что-то пошло не так, попробуйте снова'
-            });
+            res.send(baseRouter.error(500));
         }
     }
 
-    async function registration(req, res) {
-            try {
-                console.log('Body', req.body);
+    // logout
+    async function logout(req, res) {
+        try {
+            const { token } = req.body;
 
-                const { email, hash, name } = req.body;
+            let result = await mediator.get(TRIGGERS.USER_LOGOUT, { token });
 
-                let result = await mediator.get(TRIGGERS.USER_REGISTRATION, { email, hash, name });
-                
-                if (result) {
-                    res.status(201).json({
-                        message: 'Пользователь создан'
-                    });
-                } else {
-                    res.status(412).json({
-                        message: 'Пользователь с таким email уже существует'
-                    })
-                }
-
-            } catch (e) {
-                res.status(500).json({
-                    message: 'Что-то пошло не так, попробуйте снова'
-                });
+            if (result) {
+                res.send(baseRouter.answer(result));
             }
+        } catch (e) {
+            res.send(baseRouter.error(500));
+        }
+    }
+
+    // register
+    async function registration(req, res) {
+        try {
+            const { email, hash, name } = req.body;
+
+            let result = await mediator.get(TRIGGERS.USER_REGISTRATION, { email, hash, name });
+            
+            if (result) {
+                res.send(baseRouter.answer(result));
+            } else {
+                res.send(baseRouter.error(400));
+            }
+        } catch (e) {
+            res.send(baseRouter.error(500));
+        }
+    }
+
+    function defaultHandler(req, res) {
+        res.send(baseRouter.error(404));
     }
 
     return router;

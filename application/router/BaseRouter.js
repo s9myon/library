@@ -1,15 +1,16 @@
 module.exports = class BaseRouter {
     constructor() {
         this.ERROR = {
+            400: 'bad request',
             404: 'page not found',
-
-            9000: 'undefined error'
+            500: 'unknown error'
         }
     }
 
     answer(data) {
         return {
-            result: 'ok', data
+            result: 'ok',
+            data: data
         }
     }
 

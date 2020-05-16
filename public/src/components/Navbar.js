@@ -1,41 +1,43 @@
-import React from 'react';
-import { NavLink } from 'react-router-dom';
+import React, { useContext } from 'react';
+import { NavLink, useHistory } from 'react-router-dom';
+import { AuthContext } from '../context/auth.context';
+import { useHttp } from '../hooks/http.hook';
 
 export function Navbar() {
-    return (
-        <nav className="nav-wrapper">
-            <div className="navbar-brand">
-                LIBRARY
-            </div>
+    const history = useHistory();
+    const auth = useContext(AuthContext);
+    const { request } = useHttp();
 
-            <ul className="right hide-on-med-and-down">
-                <li className="nav-item">
-                    <NavLink
-                        className="nav-link"
-                        to="/"
-                        exact
-                    >
-                        Главная
-                    </NavLink>
-                </li>
-                <li className="nav-item">
-                    <NavLink
-                        className="nav-link"
-                        to="/about"
-                    >
-                        Информация
-                    </NavLink>
-                </li>
-                <li className="nav-item">
-                    <NavLink
-                        className="nav-link"
-                        to="/auth"
-                        >
-                            Авторизация
-                        </NavLink>
-                    
-                </li>
-            </ul>
+    async function logoutHandler(event) {
+        try {
+            // preventDefault отменяет обработку ссылки
+            event.preventDefault();
+            let result = await request('/logout', 'POST', { token: auth.token });
+            if (result) {
+                auth.logout();
+                history.push("/");
+            }
+        } catch(e) {
+
+        }
+        
+    }
+
+    return (
+        <nav>
+            <div className="nav-wrapper teal darken-3">
+                <span
+                    className="brand-logo"
+                    style={{ padding: '0 2rem' }}>
+                        Библиотека Онлайн
+                </span>
+
+                <ul id="nav-mobile" className="right hide-on-med-and-down">
+                    <li><NavLink to={'/home'}>Главная</NavLink></li>
+                    <li><NavLink to={'/about'}>Информация</NavLink></li>
+                    <li><a href={"/"} onClick={logoutHandler}>Выйти</a></li>
+                </ul>
+            </div>
         </nav>
     );
 }

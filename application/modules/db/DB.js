@@ -1,16 +1,9 @@
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
-const sqlite = require('sqlite');
-const ORM = require('./ORM');
 
 class DB {
     constructor({ NAME }) {
-        this.db;
-        this.orm;
-        sqlite.open(path.join(__dirname, NAME), sqlite3.Database).then(async db => {
-            this.db = db;
-            this.orm = new ORM(db);
-        });
+        this.db = new sqlite3.Database(path.join(__dirname, NAME));
     }
 
     destructor() {
@@ -18,23 +11,34 @@ class DB {
     }
 
     getUserByName(name) {
-        return this.orm.detail('user', { name });
+        return new Promise(resolve => this.db.serialize(() => {
+            const query = "SELECT * FROM users WHERE name=?";
+            this.db.get(query, [name], (err, row) => resolve(err ? null : row));
+        }));
     }
 
-    getUserByLogin(login) {
-        return this.orm.detail('user', { login });
+    getUserByEmail(email) {
+        return new Promise(resolve => this.db.serialize(() => {
+            const query = "SELECT * FROM users WHERE email=?";
+            this.db.get(query, [email], (err, row) => resolve(err ? null : row));
+        }));
     }
 
     getUserByToken(token) {
-        return this.orm.detail('user', { token });
+        return new Promise(resolve => this.db.serialize(() => {
+            const query = "SELECT * FROM users WHERE token=?";
+            this.db.get(query, [token], (err, row) => resolve(err ? null : row));
+        }));
     }
 
-    addUser(login, password, name) {
-        return this.orm.add('user', 'login, password, name', [login, password, name]);
+    addUser(email, password, name) {
+        const query = "INSERT INTO users (email, password, name) VALUES (?, ?, ?)";
+        this.db.run(query, [email, password, name]);
     }
 
-    setToken(token, login) {
-        return this.orm.update('user', { token }, { login });
+    setToken(token, email) {
+        const query = "UPDATE users SET token=? WHERE email=?";
+        this.db.run(query, [token, email]);
     }
 }
 

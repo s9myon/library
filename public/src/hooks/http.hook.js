@@ -8,19 +8,19 @@ export function useHttp() {
         setLoading(true);
         try {
             if (body) {
+                // преобразуем body в объект JSON
                 body = JSON.stringify(body);
+                // явно указываем что передаём JSON
                 headers['Content-Type'] = 'application/json';
             }
-
             const response = await fetch(url, { method, body, headers });
             const data = await response.json();
 
-            if (!response.ok) {
-                throw new Error(data.message || 'Что-то пошло не так');
+            if (data.result === "error") {
+                throw new Error(data.error.text || 'Что-то пошло не так');
             }
 
             setLoading(false);
-
             return data
         } catch (e) {
             setLoading(false);
@@ -29,9 +29,9 @@ export function useHttp() {
         }
     }, []);
 
-    function clearError() {
+    const clearError = useCallback(() => {
         setError(null);
-    }
+    }, []);
 
-    return { loading, request, error, clearError }
+    return { loading, request, error, setError, clearError }
 }
