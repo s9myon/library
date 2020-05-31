@@ -2,12 +2,17 @@ const express = require('express');
 const router = express.Router();
 
 
-function Router({ mediator, TRIGGERS }) {
+function Router({ mediator }) {
 
-    router.get('/test', test);
-    router.post('/login', login);
-    router.post('/logout', logout);
-    router.post('/register', registration);
+    const TRIGGERS = mediator.getTriggers();
+
+    router.post('/user/login', login);
+    router.post('/user/logout', logout);
+    router.post('/user/register', registration);
+    router.get('/book/profile/:token', getMyProfile);
+    router.get('/book/library/:limit/:offset', getLibraryBooks);
+    router.get('/book/details/:id', getBookDetails);
+
     router.all('/*', defaultHandler);
 
     // constructors
@@ -15,22 +20,61 @@ function Router({ mediator, TRIGGERS }) {
     // instance
     const baseRouter = new BaseRouter();
 
-    // test
-    function test(req, res) {
-        res.send({ answer: 'Hello world' });
+    // получить детальное представление книги из библиотеки
+    // (экземпляры, рецензии, ???)
+    async function getBookDetails(req, res) {
+        try {
+            const id = req.params.id;
+            let result = await mediator.get(TRIGGERS.GET_BOOK_DETAILS, id);
+            if (result) {
+                res.send(baseRouter.answer(result));
+            } else {
+                res.send(baseRouter.error(400));
+            }
+        } catch(e) {
+            res.send(baseRouter.error(500));
+        }
     }
+
+    // получить список книг в библиотеке
+    async function getLibraryBooks(req, res) {
+        try {
+            const { limit, offset } = req.params;
+            let result = await mediator.get(TRIGGERS.GET_LIBRARY_BOOKS, { limit, offset });
+            if (result) {
+                res.send(baseRouter.answer(result));
+            } else {
+                res.send(baseRouter.error(400));
+            }
+        } catch(e) {
+            res.send(baseRouter.error(500));
+        }
+    }
+
+    async function getMyProfile(req, res) {
+        try{
+            const token = req.params.token;
+            let result = await mediator.get(TRIGGERS.GET_MY_PROFILE, token);
+            if(result) {
+                res.send(baseRouter.answer(result));
+            } else if (result === null){
+                res.send(baseRouter.answer(result));
+            } else if (result === false){
+                res.send(baseRouter.error(400));
+            }
+        } catch(e) {
+            res.send(baseRouter.error(500));
+        }
+    }
+    
 
     // login
     async function login(req, res) {
         try {
             const { email, hash, random } = req.body;
-
             let result = await mediator.get(TRIGGERS.USER_LOGIN, { email, hash, random });
-            
-            const { id, name, token } = result;
-            
             if (result) {
-                res.send(baseRouter.answer({ id, name, email, token }));
+                res.send(baseRouter.answer(result));
             } else {
                 res.send(baseRouter.error(400));
             }
@@ -43,9 +87,7 @@ function Router({ mediator, TRIGGERS }) {
     async function logout(req, res) {
         try {
             const { token } = req.body;
-
             let result = await mediator.get(TRIGGERS.USER_LOGOUT, { token });
-
             if (result) {
                 res.send(baseRouter.answer(result));
             }
@@ -58,9 +100,7 @@ function Router({ mediator, TRIGGERS }) {
     async function registration(req, res) {
         try {
             const { email, hash, name } = req.body;
-
             let result = await mediator.get(TRIGGERS.USER_REGISTRATION, { email, hash, name });
-            
             if (result) {
                 res.send(baseRouter.answer(result));
             } else {

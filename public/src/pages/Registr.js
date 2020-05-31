@@ -28,7 +28,7 @@ export function Registr(){
             if (email && password1 && password2 && name) {
                 if(password1 === password2) {
                     let hash = md5(email + password1);
-                    const data = await request('/register', 'POST', { email: email, hash: hash, name: name });
+                    const data = await request('/user/register', 'POST', { email: email, hash: hash, name: name });
                     console.log('Data', data);
                     history.push("/");
                 } else {
@@ -43,46 +43,61 @@ export function Registr(){
     }
 
     return (
-        <div className="login-form">
-            <h4 className="center-align">Регистрация</h4>
-            <div>
-                <label>Email</label>
-                <input
-                    type="email"
-                    name="email"
-                    placeholder="Ввдеите ваш email"
-                    onChange={changeHandler}/>
+        <div>
+            <h3 className="center-align">Библиотека Онлайн</h3>
+            <div className="login-form">
+                <h4 className="center-align">Регистрация</h4>
+                <div>
+                    <label>Email</label>
+                    <input
+                        type="email"
+                        name="email"
+                        value={form.email}
+                        placeholder="Ввдеите ваш email"
+                        onChange={changeHandler}/>
+                </div>
+                <div>
+                    <label>Пароль</label>
+                    <input
+                        type="password"
+                        name="password1"
+                        value={form.password1}
+                        placeholder="Введите пароль"
+                        onChange={changeHandler}/>
+                </div>
+                <div>
+                    <label>Повтрите пароль</label>
+                    <input
+                        type="password"
+                        name="password2"
+                        value={form.password2}
+                        placeholder="Введите пароль"
+                        onChange={changeHandler}/>
+                </div>
+                <div>
+                    <label>Имя</label>
+                    <input
+                        type="text"
+                        name="name"
+                        value={form.name}
+                        placeholder="Введите ваше имя"
+                        onChange={changeHandler}/>
+                </div>
+                <div className="center-align" style={{ marginTop: "1rem" }}>
+                    <input
+                        className="orange darken-1 waves-effect waves-light btn"
+                        value="Зарегистрироваться"
+                        type="button"
+                        onClick={registerHandler}
+                        disabled={loading} />
+                    <a href={"/"} style={{ marginLeft: "1rem" }}><input
+                        className="orange darken-1 waves-effect waves-light btn"
+                        value="Назад"
+                        type="button"
+                        disabled={loading} /></a>
+                </div>
             </div>
-            <div>
-                <label>Пароль</label>
-                <input
-                    type="password"
-                    name="password1"
-                    placeholder="Введите пароль"
-                    onChange={changeHandler}/>
-            </div>
-            <div>
-                <label>Повтрите пароль</label>
-                <input
-                    type="password"
-                    name="password2"
-                    placeholder="Введите пароль"
-                    onChange={changeHandler}/>
-            </div>
-            <div>
-                <label>Имя</label>
-                <input
-                    type="text"
-                    name="name"
-                    placeholder="Введите ваше имя"
-                    onChange={changeHandler}/>
-            </div>
-            <input
-                className="orange darken-1 waves-effect waves-light btn"
-                value="Зарегистрироваться"
-                type="button"
-                onClick={registerHandler}
-                disabled={loading} />
         </div>
+        
     );
 }

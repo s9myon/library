@@ -12,7 +12,7 @@ export function Navbar() {
         try {
             // preventDefault отменяет обработку ссылки
             event.preventDefault();
-            let result = await request('/logout', 'POST', { token: auth.token });
+            let result = await request('/user/logout', 'POST', { token: auth.token });
             if (result) {
                 auth.logout();
                 history.push("/");
@@ -25,16 +25,15 @@ export function Navbar() {
 
     return (
         <nav>
-            <div className="nav-wrapper teal darken-3">
-                <span
-                    className="brand-logo"
-                    style={{ padding: '0 2rem' }}>
+            <div
+                className="nav-wrapper teal darken-3"
+                style={{ padding: '0 2rem' }}>
+                <span className="brand-logo">
                         Библиотека Онлайн
                 </span>
-
                 <ul id="nav-mobile" className="right hide-on-med-and-down">
                     <li><NavLink to={'/home'}>Главная</NavLink></li>
-                    <li><NavLink to={'/about'}>Информация</NavLink></li>
+                    <li><NavLink to={'/library'}>Найти книгу</NavLink></li>
                     <li><a href={"/"} onClick={logoutHandler}>Выйти</a></li>
                 </ul>
             </div>

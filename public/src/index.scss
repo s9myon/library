@@ -1,4 +1,5 @@
 @import "~materialize-css";
+@import url("https://fonts.googleapis.com/icon?family=Material+Icons");
 
 .App {
     position: relative;
@@ -21,11 +22,12 @@
 
 #root::after {
     background-image: linear-gradient(45deg, #38ef7d,#11998e);
+    background-attachment: scroll;
     content: "";
     display: block;
     height: 100%;
     left: 0;
-    position: absolute;
+    position: fixed;
     z-index: -2;
     top: 0;
     width: 100%;

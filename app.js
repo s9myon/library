@@ -4,26 +4,25 @@ const app = express();
 const server = http.createServer(app);
 
 // конфигурация
-const config = require('config');
-const PORT = config.get('PORT');
-const DATABASE = config.get('DATEBASE');
-const TRIGGERS = config.get('TRIGGERS');
-const EVENTS = config.get('EVENTS');
+const CONFIG = require('./config');
+const { PORT, DATABASE, TRIGGERS, EVENTS } = CONFIG;
 
 // классы модулей
 const Mediator = require('./application/modules/Mediator');
 const DB = require('./application/modules/db/DB');
+const UserManager = require('./application/modules/userManager/UserManager');
+const BookManager = require('./application/modules/bookManager/BookManager');
 
 // подключаем модули
 const mediator = new Mediator({ TRIGGERS, EVENTS });
 const db = new DB(DATABASE);
-const UserManager = require('./application/modules/userManager/UserManager');
 
 new UserManager({ mediator, db });
+new BookManager({ mediator, db });
 
 //  подключаем роутеры
 const Router = require('./application/router/Router');
-const router = new Router({ mediator, TRIGGERS });
+const router = new Router({ mediator });
 app.use(express.json({ extended: true }));
 app.use(express.static(__dirname + '/public'));
 app.use('/', router);

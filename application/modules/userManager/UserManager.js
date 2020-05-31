@@ -5,7 +5,7 @@ const User = require('./User');
 class UserManager extends BaseManager {
     constructor(options) {
         super(options);
-        // текущие пользователи
+        // текущие пользователиr
         this.users = {};
         // триггеры
         this.mediator.set(this.TRIGGERS.GET_USER_BY_TOKEN, token => this.getUserByToken(token));
@@ -21,7 +21,7 @@ class UserManager extends BaseManager {
     // EVENTS
     async disconnect(data) {
         let { token } = data;
-        let user = this.getUserByToken(token);
+        let user = this.getUserByToken({ token });
         if (user) {
             // обнулить токен
             await this.db.setToken(null, user.email);
@@ -60,7 +60,7 @@ class UserManager extends BaseManager {
         return true;
     }
 
-    async userLogin(data = {}) {
+    async userLogin(data) {
         const { email, hash, random } = data;
         let user;
         if (email && hash && random) {
@@ -73,14 +73,14 @@ class UserManager extends BaseManager {
                     await this.db.setToken(token, email);
                     user.token = token;
                     this.users[user.id] = new User(user);
-                    return user;
+                    return { id: user.id, token: user.token, type: user.type };
                 }
             }
         }
         return null;
     }
 
-    async userRegistration(data = {}) {
+    async userRegistration(data) {
         const { email, hash, name } = data;
         if (email && hash && name) {
             if (await this.db.getUserByEmail(email)) {
