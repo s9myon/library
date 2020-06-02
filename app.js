@@ -47,26 +47,3 @@ async function start() {
 
 start();
 process.on('SIGINT', deinitModules);
-// классы модулей
-// const DB = require('./application/modules/db/DB'); // базонька с данными
-
-// подключение модулей
-// const db = new DB(DATABASE);
-
-// получаем роутер
-// const Router = require('./application/router/Router');
-// const router = new Router();
-// // указываем директорию со статическими файлами
-// app.use(express.static(__dirname + '/public'));
-// app.use("/", router);
-
-
-// function deinitModules() {
-// 	db.destructor();
-// 	setTimeout(() => process.exit(), 500);
-// }
-
-// слушаем порт
-//server.listen(9000, () => console.log(`Port is ${PORT}`));
-// выключаем базу данных
-// process.on('SIGINT', deinitModules);

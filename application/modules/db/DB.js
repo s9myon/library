@@ -51,6 +51,30 @@ class DB {
         }));
     }
 
+    getBookByTitle(title) {
+        return new Promise(resolve => this.db.serialize(() => {
+            const query = `SELECT book.id, book.title, author.surname,
+            author.name, author.middleName FROM book
+            INNER JOIN author
+            ON book.author = author.id
+            WHERE book.title = ?`;
+            this.db.get(query, [title], (err, row) => resolve(err ? null : row));
+        }));
+    }
+
+    getBooksByAuthorInitials(surname, name, middleName) {
+        return new Promise(resolve => this.db.serialize(() => {
+            const query = `SELECT book.id, book.title, author.surname,
+            author.name, author.middleName FROM book
+            INNER JOIN author
+            ON book.author = author.id
+            WHERE author.surname=?
+            AND author.name=?
+            AND author.middleName=?`;
+            this.db.all(query, [surname, name, middleName], (err, row) => resolve(err ? null : row));
+        }));
+    }
+
     getBooksFromTo(limit, offset) {
         return new Promise(resolve => this.db.serialize(() => {
             const query = `SELECT book.id, book.title AS book, author.surname AS author
@@ -74,7 +98,7 @@ class DB {
     }
 
     getInstancesOfBookByBookTitle(book) {
-        return new Promise(resolve => this.serialize(() => {
+        return new Promise(resolve => this.db.serialize(() => {
             const query = `SELECT instance.id, book.title AS book,
             author.surname AS author, instance.dateTaken
             FROM instance INNER JOIN book
@@ -87,9 +111,19 @@ class DB {
     }
 
     getAuthorBySurname(surname) {
-        return new Promise(resolve => this.serialize(() => {
-            const query = "SELECT * FROM author WHERE author.surname = ?";
+        return new Promise(resolve => this.db.serialize(() => {
+            const query = "SELECT * FROM author WHERE author.surname=?";
             this.db.get(query, [surname], (err, row) => resolve(err ? null : row));
+        }));
+    }
+
+    getAuthorByInitials(surname, name, middleName) {
+        return new Promise(resolve => this.db.serialize(() => {
+            const query = `SELECT * FROM author
+            WHERE author.surname=?
+            AND author.name=?
+            AND author.middleName=?`;
+            this.db.get(query, [surname, name, middleName], (err, row) => resolve(err ? null : row));
         }));
     }
 
@@ -98,9 +132,14 @@ class DB {
         this.db.run(query, [email, password, name]);
     }
 
-    addBook(book, author) {
+    addBook(book, authorId) {
         const query = "INSERT INTO book (title, author) VALUES (?, ?)";
-        this.db.run(query, [book, author]);
+        this.db.run(query, [book, authorId]);
+    }
+
+    addInstanceOfBook(bookId) {
+        const query = "INSERT INTO instance (book) VALUES (?)";
+        this.db.run(query, [bookId]);
     }
 
     addAuthor(surname, name, middleName) {

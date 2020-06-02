@@ -12,6 +12,7 @@ function Router({ mediator }) {
     router.get('/book/profile/:token', getMyProfile);
     router.get('/book/library/:limit/:offset', getLibraryBooks);
     router.get('/book/details/:id', getBookDetails);
+    router.post('/book/admin/addbook', addNewBook);
 
     router.all('/*', defaultHandler);
 
@@ -19,6 +20,20 @@ function Router({ mediator }) {
     const BaseRouter = require("./BaseRouter");
     // instance
     const baseRouter = new BaseRouter();
+    
+    async function addNewBook(req, res) {
+        try {
+            const { book, author, token } = req.body;
+            const result = await mediator.get(TRIGGERS.ADD_NEW_BOOK, { book, author, token });
+            if (result) {
+                res.send(baseRouter.answer(result));
+            } else {
+                res.send(baseRouter.error(400));
+            }
+        } catch (e) {
+            res.send(baseRouter.error(500));
+        }
+    }
 
     // получить детальное представление книги из библиотеки
     // (экземпляры, рецензии, ???)

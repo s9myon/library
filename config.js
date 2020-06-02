@@ -19,7 +19,8 @@ const CONFIG = {
         // about books
         GET_MY_PROFILE: "GET_MY_PROFILE",
         GET_BOOK_DETAILS: "GET_BOOK_DETAILS",
-        GET_LIBRARY_BOOKS: "GET_LIBRARY_BOOKS"
+        GET_LIBRARY_BOOKS: "GET_LIBRARY_BOOKS",
+        ADD_NEW_BOOK: "ADD_NEW_BOOK"
     },
 
     EVENTS: {

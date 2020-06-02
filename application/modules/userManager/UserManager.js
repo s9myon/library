@@ -31,10 +31,10 @@ class UserManager extends BaseManager {
     }
 
     // TRIGGERS
-    getUserByToken(data = {}) {
-        if (data.token) {
+    getUserByToken(token) {
+        if (token) {
             for (let id in this.users) {
-                if (this.users[id].token === data.token) {
+                if (this.users[id].token === token) {
                     return this.users[id];
                 }
             }

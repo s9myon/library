@@ -20,10 +20,12 @@ export function Auth(){
 
     function changeHandler(event) {
         setForm({ ...form, [event.target.name]: event.target.value });
+        console.log(form);
     }
 
     async function loginHandler() {
         try {
+            console.log(form);
             const { email, password } = form;
             if (email && password) {
                 const random = Math.random();
