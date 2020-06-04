@@ -44,7 +44,6 @@ export function Registr(){
 
     return (
         <div>
-            <h3 className="center-align">Библиотека Онлайн</h3>
             <div className="login-form">
                 <h4 className="center-align">Регистрация</h4>
                 <div>

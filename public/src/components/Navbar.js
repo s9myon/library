@@ -5,16 +5,16 @@ import { useHttp } from '../hooks/http.hook';
 
 export function Navbar() {
     const history = useHistory();
-    const auth = useContext(AuthContext);
+    const { logout, isAuth, token } = useContext(AuthContext);
     const { request } = useHttp();
 
     async function logoutHandler(event) {
         try {
             // preventDefault отменяет обработку ссылки
             event.preventDefault();
-            let result = await request('/user/logout', 'POST', { token: auth.token });
+            let result = await request('/user/logout', 'POST', { token: token });
             if (result) {
-                auth.logout();
+                logout();
                 history.push("/");
             }
         } catch(e) {
@@ -31,11 +31,17 @@ export function Navbar() {
                 <span className="brand-logo">
                         Библиотека Онлайн
                 </span>
-                <ul id="nav-mobile" className="right hide-on-med-and-down">
-                    <li><NavLink to={'/home'}>Главная</NavLink></li>
-                    <li><NavLink to={'/library'}>Найти книгу</NavLink></li>
-                    <li><a href={"/"} onClick={logoutHandler}>Выйти</a></li>
-                </ul>
+                { isAuth
+                ?   <ul id="nav-mobile" className="right hide-on-med-and-down">
+                        <li><NavLink to={'/home'}>Главная</NavLink></li>
+                        <li><NavLink to={'/library'}>Найти книгу</NavLink></li>
+                        <li><a href={"/"} onClick={logoutHandler}>Выйти</a></li>
+                    </ul>
+                :   <ul id="nav-mobile" className="right hide-on-med-and-down">
+                        <li><NavLink to={'/library'}>Найти книгу</NavLink></li>
+                        <li><NavLink to={'/auth'}>Войти</NavLink></li>
+                    </ul>}
+                
             </div>
         </nav>
     );

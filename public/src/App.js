@@ -21,7 +21,7 @@ function App() {
             id, token, type, login, logout, isAuth, ready
         }}>
             <BrowserRouter>
-                { isAuth && <Navbar /> }
+                <Navbar/>
                 <div className="container">
                     <Switch>
                         { routes }

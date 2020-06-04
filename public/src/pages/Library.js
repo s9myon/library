@@ -11,7 +11,7 @@ export function Library() {
     const [data, setData] = useState(null);
     const history = useHistory();
     // количество записей на странице
-    const limit = 10;
+    let limit = 10;
     let offset = 0;
 
     const getLibraryBooks = useCallback( async () => {

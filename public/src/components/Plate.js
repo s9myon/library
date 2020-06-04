@@ -21,7 +21,7 @@ export function Plate({ books, pressHandler }) {
                                 value="Подробнее"
                                 type="button"/> :
                             null } <br/>
-                        { book.author }<br/>
+                        { book.surname + " " + book.name + " " + book.middleName }<br/>
                         { book.dateTaken ? <span>Дата взятия: { book.dateTaken }</span> : null }
                     </div>
                     

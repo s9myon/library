@@ -13,6 +13,7 @@ export function Home() {
     const getMyBooks = useCallback( async () => {
         try {
             const result = await request(`/book/profile/${ token }`, 'GET', null);
+            console.log("Home", result.data)
             setData(result.data);
         } catch(e) {
 

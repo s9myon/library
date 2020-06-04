@@ -79,7 +79,8 @@ class BookManager extends BaseManager {
     async getBookDetails(id) {
         if (id) {
             let book = await this.db.getBookById(id);
-            return book ? book : null;
+            let instancesOfBook = await this.db.getInstancesOfBookByBookTitle(book.book);
+            return { book, instances: instancesOfBook };
         }
         return false;
     }

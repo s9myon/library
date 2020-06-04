@@ -44,12 +44,15 @@ class DB {
 
     getBookById(id) {
         return new Promise(resolve => this.db.serialize(() => {
-            const query = `SELECT book.id, book.title AS book, author.surname AS author
+            const query = `SELECT book.id, book.title AS book, author.surname,
+            author.name, author.middleName
             FROM book INNER JOIN author ON
             book.author = author.id WHERE book.id = ?`;
             this.db.get(query, [id], (err, row) => resolve(err ? null : row));
         }));
     }
+
+
 
     getBookByTitle(title) {
         return new Promise(resolve => this.db.serialize(() => {
@@ -77,7 +80,7 @@ class DB {
 
     getBooksFromTo(limit, offset) {
         return new Promise(resolve => this.db.serialize(() => {
-            const query = `SELECT book.id, book.title AS book, author.surname AS author
+            const query = `SELECT book.id, book.title AS book, author.surname, author.name, author.middleName
             FROM book INNER JOIN author ON book.author = author.id LIMIT ? OFFSET ?`;
             this.db.all(query, [limit, offset], (err, row) => resolve(err ? null : row));
         }));
@@ -85,7 +88,8 @@ class DB {
 
     getInstancesOfBooksByHolderEmail(email) {
         return new Promise(resolve => this.db.serialize(() => {
-            const query = `SELECT instance.id, book.title AS book, author.surname AS author, instance.dateTaken
+            const query = `SELECT instance.id, book.title AS book,
+            author.surname, author.name, author.middleName, instance.dateTaken
             FROM instance INNER JOIN book
             ON instance.book=book.id
             INNER JOIN author
@@ -99,12 +103,9 @@ class DB {
 
     getInstancesOfBookByBookTitle(book) {
         return new Promise(resolve => this.db.serialize(() => {
-            const query = `SELECT instance.id, book.title AS book,
-            author.surname AS author, instance.dateTaken
+            const query = `SELECT instance.id, instance.holder ,instance.dateTaken
             FROM instance INNER JOIN book
             ON instance.book = book.id
-            INNER JOIN author
-            ON book.author = author.id
             WHERE book.title = ?`;
             this.db.all(query, [book], (err, row) => resolve(err ? null : row));
         }));
@@ -125,6 +126,24 @@ class DB {
             AND author.middleName=?`;
             this.db.get(query, [surname, name, middleName], (err, row) => resolve(err ? null : row));
         }));
+    }
+
+    getWishListByUserId(userId) {
+        return new Promise(resolve => this.db.serialize(() => {
+            const query = `SELECT wishList.id, user.name, book.title
+            FROM wishList
+            INNER JOIN user
+            ON wishList.user = user.id
+            INNER JOIN book
+            ON wishList.book = book.id
+            WHERE user.id = ?`;
+            this.db.all(query, [userId], (err, row) => resolve(err ? null : row));
+        }));
+    }
+
+    addWish(user, book) {
+        const query = "INSERT INTO wishList (user, book) VALUES (?, ?)";
+        this.db.add(query, [user, book]);
     }
 
     addUser(email, password, name) {
@@ -150,6 +169,11 @@ class DB {
     setToken(token, email) {
         const query = "UPDATE user SET token=? WHERE email=?";
         this.db.run(query, [token, email]);
+    }
+
+    deleteWishByBookId(bookId) {
+        const query = "DELETE FROM wishList WHERE wishList.book = ?";
+        this.db.run(query, [bookId]);
     }
 }
 

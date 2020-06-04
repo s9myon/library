@@ -20,6 +20,7 @@ export function Detail() {
         }
     }, [bookId, request]);
 
+
     useEffect(() => {
         getBook();
     }, [getBook]);
@@ -30,7 +31,10 @@ export function Detail() {
 
     return(
         <Fragment>
-            { !loading && book && <BookCard book={ book }/>}
+            { !loading && book &&
+            <BookCard
+                book={ book }
+                />}
         </Fragment>
     );
 };
