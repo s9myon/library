@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react';
 
-export function BookCard({ book }) {
+export function BookCard({ book, addWishHandler, isAuth, type }) {
     return (
         <Fragment>
             <div className="row">
@@ -16,10 +16,10 @@ export function BookCard({ book }) {
                                             Экземпляры книги в наличии
                                         </span><br/>
                                         <span className="card-content black-text">
-                                            {"Всего экземпляров в библиотеке: " + book.instances.length}
+                                            {"Всего экземпляров: " + book.instances.length}
                                         </span><br/>
                                         <span className="card-content black-text">
-                                            {"Книг в наличии: " + book.instances.filter((instance) => {
+                                            {"Экземпляры находящиеся в библиотеке: " + book.instances.filter((instance) => {
                                                 if(instance.holder === null) {
                                                     return true;
                                                 }
@@ -33,9 +33,18 @@ export function BookCard({ book }) {
                                         </span>
                                     </div>
                             }
-                        <div className="card-action" style={{ marginTop: "1rem" }}>
-                            <a href="/">Написать рецензию</a>
-                        </div>
+                        { (isAuth && (type !== "admin"))
+                            ?   <div className="card-action" style={{ marginTop: "1rem" }}>
+                                    <button
+                                        className="teal darken-1 waves-effect waves-light btn"
+                                        id={ book.book.id }
+                                        style={{ marginLeft: "1rem" }}
+                                        onClick={ addWishHandler }>
+                                            Добавить в лист ожидания
+                                            <i className="material-icons left">add</i>
+                                    </button>
+                                </div>
+                            :   null }
                     </div>
                 </div>
             </div>

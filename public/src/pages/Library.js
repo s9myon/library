@@ -24,6 +24,7 @@ export function Library() {
     }, [request, limit, offset]);
 
     function pressHandler(event) {
+        console.log(event.target.id);
         history.push(`/detail/${event.target.id}`);
     }
 

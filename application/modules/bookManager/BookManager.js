@@ -7,7 +7,10 @@ class BookManager extends BaseManager {
         this.mediator.set(this.TRIGGERS.GET_MY_PROFILE, token => this.getMyProfile(token));
         this.mediator.set(this.TRIGGERS.GET_BOOK_DETAILS, id => this.getBookDetails(id));
         this.mediator.set(this.TRIGGERS.GET_LIBRARY_BOOKS, data => this.getLibraryBooks(data));
+        this.mediator.set(this.TRIGGERS.GET_USER_WISH_LIST, token => this.getUserWishList(token));
         this.mediator.set(this.TRIGGERS.ADD_NEW_BOOK, data => this.addNewBook(data));
+        this.mediator.set(this.TRIGGERS.ADD_NEW_WISH, data => this.addNewWish(data));
+        this.mediator.set(this.TRIGGERS.DELETE_WISH, data => this.deleteWish(data));
     }
 
     // на вход идут книга.название, автор.имя, автор.фамилия, автор.отчество
@@ -55,6 +58,56 @@ class BookManager extends BaseManager {
                         return true;
                     }
                 }
+            }
+        }
+        return false;
+    }
+
+    async addNewWish(data) {
+        if(data.token) {
+            let user = this.mediator.get(this.TRIGGERS.GET_USER_BY_TOKEN, data.token);
+            if (user) {
+                let wishes = await this.db.getWishListByUserId(user.id);
+                let books =  await this.db.getInstancesOfBooksByHolderEmail(user.email);
+                if (wishes && books) {
+                    let hitСounter = 0;
+                    for (let i = 0; i < wishes.length; i++) {
+                        if (wishes[i].title === data.book.book) {
+                            hitСounter++;
+                        }
+                    }
+                    for (let i = 0; i < books.length; i++) {
+                        if (books[i].book === data.book.book) {
+                            hitСounter++;
+                        }
+                    }
+                    if (hitСounter === 0) {
+                        await this.db.addWish(user.id, data.book.id);
+                        return true;
+                    }
+                    
+                }
+            }
+        }
+        return false;
+    }
+
+    async deleteWish(data) {
+        if (data.token) {
+            if(data.book.id) {
+                await this.db.deleteWishByBookId(book.id);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    async getUserWishList(token) {
+        if (token) {
+            let user = this.mediator.get(this.TRIGGERS.GET_USER_BY_TOKEN, token);
+            if (user) {
+                let wishList = await this.db.getWishListByUserId(user.id);
+                return wishList ? wishList : null;
             }
         }
         return false;

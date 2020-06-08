@@ -10,6 +10,7 @@ class DB {
         if (this.db) this.db.close();
     }
 
+    // GET
     getUserByName(name) {
         return new Promise(resolve => this.db.serialize(() => {
             const query = "SELECT * FROM user WHERE name=?";
@@ -130,20 +131,27 @@ class DB {
 
     getWishListByUserId(userId) {
         return new Promise(resolve => this.db.serialize(() => {
-            const query = `SELECT wishList.id, user.name, book.title
+            const query = `SELECT wishList.id, user.name, book.title,
+            author.surname, author.name, author.middleName,
+            instance.dateTaken
             FROM wishList
             INNER JOIN user
             ON wishList.user = user.id
             INNER JOIN book
             ON wishList.book = book.id
+            INNER JOIN instance
+            ON book.id = instance.book
+            INNER JOIN author
+            ON book.author = author.id
             WHERE user.id = ?`;
             this.db.all(query, [userId], (err, row) => resolve(err ? null : row));
         }));
     }
 
+    // ADD
     addWish(user, book) {
         const query = "INSERT INTO wishList (user, book) VALUES (?, ?)";
-        this.db.add(query, [user, book]);
+        this.db.run(query, [user, book]);
     }
 
     addUser(email, password, name) {
@@ -165,12 +173,14 @@ class DB {
         const query = "INSERT INTO author (surname, name, middleName) VALUES (?, ?, ?)";
         this.db.run(query, [surname, name, middleName]);
     }
-
+    
+    // SET
     setToken(token, email) {
         const query = "UPDATE user SET token=? WHERE email=?";
         this.db.run(query, [token, email]);
     }
-
+    
+    // DELETE
     deleteWishByBookId(bookId) {
         const query = "DELETE FROM wishList WHERE wishList.book = ?";
         this.db.run(query, [bookId]);

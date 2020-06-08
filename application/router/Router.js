@@ -12,7 +12,10 @@ function Router({ mediator }) {
     router.get('/book/profile/:token', getMyProfile);
     router.get('/book/library/:limit/:offset', getLibraryBooks);
     router.get('/book/details/:id', getBookDetails);
+    router.get('/book/wish/:token', getUserWishList)
     router.post('/book/admin/addbook', addNewBook);
+    router.post('/book/wish/addwish', addNewWish);
+    router.post('/book/wish/delete', deleteWish);
 
     router.all('/*', defaultHandler);
 
@@ -20,6 +23,49 @@ function Router({ mediator }) {
     const BaseRouter = require("./BaseRouter");
     // instance
     const baseRouter = new BaseRouter();
+
+    async function addNewWish(req, res) {
+        try {
+            const { book, token } = req.body;
+            const result = await mediator.get(TRIGGERS.ADD_NEW_WISH, { book, token });
+            if (result) {
+                res.send(baseRouter.answer(result));
+            } else {
+                res.send(baseRouter.error(501));
+            }
+        } catch(e) {
+            res.send(baseRouter.error(500));
+        }
+    }
+
+    async function getUserWishList(req, res) {
+        try {
+            const token = req.params.token;
+            const result = await mediator.get(TRIGGERS.GET_USER_WISH_LIST, token);
+            if (result) {
+                res.send(baseRouter.answer(result));
+            } else {
+                res.send(baseRouter.error(400));
+            }
+        } catch {
+            res.send(baseRouter.error(500));
+        }
+    }
+
+    async function deleteWish() {
+        try {
+            const { book, token } = req.body;
+            const result = await mediator.get(TRIGGERS.DELETE_WISH, { book, token });
+            if (result) {
+                res.send(baseRoutre.answer(result))
+            } else {
+                res.send(baseRouter.error(400));
+            }
+        } catch(e) {
+            res.send(baseRouter.error(500));
+        }
+        
+    }
     
     async function addNewBook(req, res) {
         try {

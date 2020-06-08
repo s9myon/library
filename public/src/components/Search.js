@@ -34,7 +34,7 @@ export function Search() {
                                 type="text"
                                 name="author"
                                 value={form.author}
-                                placeholder="Введите имя автора"
+                                placeholder="Введите ФИО автора"
                                 onChange={changeHandler}/>
                         </div>
                     </div>

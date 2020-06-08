@@ -48,7 +48,6 @@ export function AdminPage() {
                 bookFormHandler = {() => bookFormHandler()}
                 updateForm = {(field, value) => updateForm(field, value)}
             />
-
         </div>
     );
 }

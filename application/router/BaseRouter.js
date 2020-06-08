@@ -3,7 +3,8 @@ module.exports = class BaseRouter {
         this.ERROR = {
             400: 'bad request',
             404: 'page not found',
-            500: 'unknown error'
+            500: 'unknown error',
+            501: 'Возможно этот экземпляр уже у вас на руках или в вашем листе ожидания'
         }
     }
 

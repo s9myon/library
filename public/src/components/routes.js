@@ -6,6 +6,7 @@ import { Registr } from '../pages/Registr';
 import { Detail } from '../pages/Detail';
 import { Library } from '../pages/Library';
 import { AdminPage } from '../pages/AdminPage';
+import { WishList } from '../pages/WishList';
 
 export function useRoutes(isAuth, type) {
     if (isAuth) {
@@ -37,6 +38,9 @@ export function useRoutes(isAuth, type) {
                     </Route>
                     <Route path={'/detail/:id'} exact>
                         <Detail />
+                    </Route>
+                    <Route path={'/wishlist'}>
+                        <WishList />
                     </Route>
 
                     <Redirect to={'/home'} />

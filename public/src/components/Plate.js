@@ -15,7 +15,7 @@ export function Plate({ books, pressHandler }) {
                         </span>
                         { !book.dateTaken ?
                             <input
-                                className="teal darken-3 waves-effect waves-light btn secondary-content"
+                                className="teal darken-1 waves-effect waves-light btn secondary-content"
                                 id={ book.id }
                                 onClick={ pressHandler }
                                 value="Подробнее"

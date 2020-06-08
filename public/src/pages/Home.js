@@ -1,6 +1,5 @@
 import React, { Fragment, useCallback, useContext, useState, useEffect } from 'react';
 import { Loader } from '../components/Loader';
-import { Plate } from '../components/Plate';
 import { AuthContext } from '../context/auth.context';
 import { useHttp } from '../hooks/http.hook';
 import { UserCard } from '../components/UserCard';
@@ -13,7 +12,6 @@ export function Home() {
     const getMyBooks = useCallback( async () => {
         try {
             const result = await request(`/book/profile/${ token }`, 'GET', null);
-            console.log("Home", result.data)
             setData(result.data);
         } catch(e) {
 
@@ -30,9 +28,8 @@ export function Home() {
 
     return (
         <Fragment>
-            { !loading && data && <UserCard user={ data.userInfo } />}
-            <hr/>
-            { !loading && data && <Plate books={ data.books }/>}
+            { !loading && data && <UserCard user={ data.userInfo } books={ data.books }/>}
+            {/* { !loading && data && <Plate books={ data.books }/>} */}
         </Fragment>
     );
 }
