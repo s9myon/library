@@ -10,7 +10,9 @@ export function AddBooks(props) {
         book: '',
         name: '',
         surname: '',
-        middleName: ''
+        middleName: '',
+        yearOfIssue: '',
+        publishingHouse: ''
     });
     
 
@@ -35,23 +37,23 @@ export function AddBooks(props) {
                     </div>
                     <div>
                         <div>
-                            <label>Имя</label>
+                            <label>Фамилия</label>
                             <input
                                 type="text"
-                                name="name"
-                                value={form.name}
+                                name="surname"
+                                value={form.surname}
                                 onChange={changeHandler}
-                                placeholder="Введите имя автора"/>
+                                placeholder="Введите фамилия автора"/>
                         </div>
                         <div className="row">
                             <div className="col s6">
-                                <label>Фамилия</label>
+                                <label>Имя</label>
                                 <input
                                     type="text"
-                                    name="surname"
-                                    value={form.surname}
+                                    name="name"
+                                    value={form.name}
                                     onChange={changeHandler}
-                                    placeholder="Введите фамилия автора"/>
+                                    placeholder="Введите имя автора"/>
                             </div>
                             <div className="col s6">
                                 <label>Отчество</label>
@@ -64,12 +66,30 @@ export function AddBooks(props) {
                             </div>
                         </div>
                     </div>
+                    <div>
+                        <label>Год издания</label>
+                        <input
+                            type="text"
+                            name="yearOfIssue"
+                            value={form.yearOfIssue}
+                            onChange={changeHandler}
+                            placeholder="Введите год издания книги"/>
+                    </div>
+                    <div>
+                        <label>Издательство</label>
+                        <input
+                            type="text"
+                            name="publishingHouse"
+                            value={form.publishingHouse}
+                            onChange={changeHandler}
+                            placeholder="Введите название издательства книги"/>
+                    </div>
                 </div>
                 <div className="card-action">
                     <div>
                         <input
                             className="orange darken-1 waves-effect waves-light btn"
-                            value="Найти"
+                            value="Добавить"
                             type="button"
                             onClick={bookFormHandler}
                             disabled={loading} />

@@ -1,31 +1,33 @@
 import React from 'react';
 
-export function WishPlate({ wish, pressHandler }) {
+export function WishPlate({ wishes, pressHandler }) {
     return (
         <ul className="collection">
-            {wish.map(book => {
+            {wishes.map(wish => {
                 return(
                 <li className="collection-item"
-                    key={ book.id }
-                    id={ book.id }
+                    key={ wish.id }
+                    id={ wish.id }
                     style={{ paddingTop: '2rem', paddingBottom: '2rem'}}>
                     <div>
                         <span
                             style={{ fontWeight: "bold" }}>
-                                { book.title }
+                                { wish.title }
                         </span>
                         <button
                             className="red accent-4 waves-effect waves-light btn secondary-content"
-                            id={ book.id }
-                            value={ book.id }
+                            id={ wish.id }
+                            value={ wish.id }
                             onClick={ pressHandler }>
-                                <i className="material-icons">close</i>
+                                <i  className="material-icons"
+                                    id={ wish.id }
+                                    value={ wish.id }>close</i>
                         </button><br/>
-                        { book.surname + " " + book.name + " " + book.middleName }<br/>
+                        { wish.surname + " " + wish.name + " " + wish.middleName }<br/>
                         <span className="center-align" style={{ fontWeight: "bold" }}>Статус: </span>
-                        { book.dateTaken === null
-                            ? <span>На данный момент в библиотеке нет ни одного экземпляра данной книги</span>
-                            : <span>В библиотеке есть экземпляр данной книги. Вы можете прийти и забрать его</span>}
+                        { wish.dateTaken === null
+                            ? <span>В библиотеке есть это издание. Вы можете прийти и забрать его</span>
+                            : <span>На данный момент в библиотеке нет этого издания</span>}
                     </div>
                     
                 </li>)

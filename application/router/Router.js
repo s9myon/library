@@ -9,10 +9,13 @@ function Router({ mediator }) {
     router.post('/user/login', login);
     router.post('/user/logout', logout);
     router.post('/user/register', registration);
-    router.get('/book/profile/:token', getMyProfile);
+    router.get('/user/profile/:token', getMyProfile);
+    router.get('/user/admin/profile/:id/:token', getUserProfile);
+    router.get('/user/admin/userslist/:token', getUsersList);
     router.get('/book/library/:limit/:offset', getLibraryBooks);
     router.get('/book/details/:id', getBookDetails);
-    router.get('/book/wish/:token', getUserWishList)
+    router.get('/book/wish/:token', getUserWishList);
+    router.post('/book/admin/updateinstance', updateBookInstanceStatus);
     router.post('/book/admin/addbook', addNewBook);
     router.post('/book/wish/addwish', addNewWish);
     router.post('/book/wish/delete', deleteWish);
@@ -24,10 +27,38 @@ function Router({ mediator }) {
     // instance
     const baseRouter = new BaseRouter();
 
+    async function updateBookInstanceStatus(req, res) {
+        try {
+            const { instance, user, token } = req.body;
+            const result = await mediator.get(TRIGGERS.UPDATE_BOOK_INSTANCE, { instance, user, token });
+            if (result) {
+                res.send(baseRouter.answer(result));
+            } else {
+                res.send(baseRouter.error(400));
+            }
+        } catch(e) {
+            res.send(baseRouter.error(500));
+        }
+    }
+
+    async function getUsersList(req, res) {
+        try {
+            const token = req.params.token;
+            const result = await mediator.get(TRIGGERS.GET_USERS_LIST, token);
+            if (result) {
+                res.send(baseRouter.answer(result));
+            } else {
+                res.send(baseRouter.error(400));
+            }
+        } catch (e) {
+            res.send(baseRouter.error(500));
+        }
+    }
+
     async function addNewWish(req, res) {
         try {
-            const { book, token } = req.body;
-            const result = await mediator.get(TRIGGERS.ADD_NEW_WISH, { book, token });
+            const { instance, token } = req.body;
+            const result = await mediator.get(TRIGGERS.ADD_NEW_WISH, { instance, token });
             if (result) {
                 res.send(baseRouter.answer(result));
             } else {
@@ -47,17 +78,17 @@ function Router({ mediator }) {
             } else {
                 res.send(baseRouter.error(400));
             }
-        } catch {
+        } catch (e) {
             res.send(baseRouter.error(500));
         }
     }
 
-    async function deleteWish() {
+    async function deleteWish(req, res) {
         try {
-            const { book, token } = req.body;
-            const result = await mediator.get(TRIGGERS.DELETE_WISH, { book, token });
+            const { instance, token } = req.body;
+            const result = await mediator.get(TRIGGERS.DELETE_WISH, { instance, token });
             if (result) {
-                res.send(baseRoutre.answer(result))
+                res.send(baseRouter.answer(result))
             } else {
                 res.send(baseRouter.error(400));
             }
@@ -69,8 +100,8 @@ function Router({ mediator }) {
     
     async function addNewBook(req, res) {
         try {
-            const { book, author, token } = req.body;
-            const result = await mediator.get(TRIGGERS.ADD_NEW_BOOK, { book, author, token });
+            const { book, author, yearOfIssue, publishingHouse, token } = req.body;
+            const result = await mediator.get(TRIGGERS.ADD_NEW_BOOK, { book, author, yearOfIssue, publishingHouse, token });
             if (result) {
                 res.send(baseRouter.answer(result));
             } else {
@@ -87,6 +118,20 @@ function Router({ mediator }) {
         try {
             const id = req.params.id;
             let result = await mediator.get(TRIGGERS.GET_BOOK_DETAILS, id);
+            if (result) {
+                res.send(baseRouter.answer(result));
+            } else {
+                res.send(baseRouter.error(400));
+            }
+        } catch(e) {
+            res.send(baseRouter.error(500));
+        }
+    }
+
+    async function getUserProfile(req, res) {
+        try {
+            const { id, token } = req.params;
+            let result = await mediator.get(TRIGGERS.GET_USER_PROFILE, { user: { id }, token });
             if (result) {
                 res.send(baseRouter.answer(result));
             } else {

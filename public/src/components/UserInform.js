@@ -1,8 +1,7 @@
 import React, { Fragment } from 'react';
 import { Plate } from '../components/Plate';
 
-export function UserCard({ user, books }) {
-
+export function UserInform({ user, books, isAuth, type, changeStatus }) {
     return (
         <Fragment>
             <div className="row">
@@ -10,23 +9,26 @@ export function UserCard({ user, books }) {
                     <div className="card white">
                         <div className="card-content black-text">
                             <div>
-                                <span className="card-title">Мои профиль: </span>
+                                <span className="card-title">Информация о читателе</span>
                             </div>
                             <div style={{ marginLeft: "1rem" }}>
-                                <span>Имя пользователя</span>
+                                <label>Имя читателя</label>
                                 <span className="card-title">{ user.name }</span><br/>
                             </div>
                             <div style={{ marginLeft: "1rem" }}>
-                                <span>Email пользователя</span>
+                                <label>Email читателя</label>
                                 <span className="card-title">{ user.email }</span>
                             </div>
                             <div style={{ marginTop: "4rem" }}>
-                                <span className="card-title">Мои книги :</span>
+                                <span className="card-title">Книги на руках:</span>
                             </div>
-                            {
-                                books !== []
-                                ? <Plate books={ books }/>
-                                : <span className="center-align card-title">Книги все книги возвращены</span>
+                            {   (books !== [])
+                                ?   <Plate
+                                        books={ books }
+                                        isAuth={ isAuth }
+                                        type={ type }
+                                        changeStatus={ changeStatus }/>
+                                :   <span className="center-align card-title">Книги все книги возвращены</span>
                             }
                         </div>
                     </div>

@@ -11,7 +11,7 @@ export function Home() {
 
     const getMyBooks = useCallback( async () => {
         try {
-            const result = await request(`/book/profile/${ token }`, 'GET', null);
+            const result = await request(`/user/profile/${ token }`, 'GET', null);
             setData(result.data);
         } catch(e) {
 
@@ -29,7 +29,6 @@ export function Home() {
     return (
         <Fragment>
             { !loading && data && <UserCard user={ data.userInfo } books={ data.books }/>}
-            {/* { !loading && data && <Plate books={ data.books }/>} */}
         </Fragment>
     );
 }

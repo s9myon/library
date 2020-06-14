@@ -74,12 +74,12 @@ export function Registr(){
                         onChange={changeHandler}/>
                 </div>
                 <div>
-                    <label>Имя</label>
+                    <label>ФИО</label>
                     <input
                         type="text"
                         name="name"
                         value={form.name}
-                        placeholder="Введите ваше имя"
+                        placeholder="Введите ФИО"
                         onChange={changeHandler}/>
                 </div>
                 <div className="center-align" style={{ marginTop: "1rem" }}>

@@ -35,17 +35,18 @@ export function Navbar() {
                 ?   (type !== "admin")
                     ?   <ul id="nav-mobile" className="right hide-on-med-and-down">
                             <li><NavLink to={'/home'}>Главная</NavLink></li>
-                            <li><NavLink to={'/library'}>Найти книгу</NavLink></li>
+                            <li><NavLink to={'/library'}>Онлайн каталог</NavLink></li>
                             <li><NavLink to={'/wishlist'}>Лист ожидания</NavLink></li>
                             <li><a href={"/"} onClick={logoutHandler}>Выйти</a></li>
                         </ul>
                     :   <ul id="nav-mobile" className="right hide-on-med-and-down">
-                            <li><NavLink to={'/home'}>Главная</NavLink></li>
-                            <li><NavLink to={'/library'}>Найти книгу</NavLink></li>
+                            <li><NavLink to={'/home'}>Страница библиотекаря</NavLink></li>
+                            <li><NavLink to={'/userslist'}>Список читателей</NavLink></li>
+                            <li><NavLink to={'/library'}>Онлайн каталог</NavLink></li>
                             <li><a href={"/"} onClick={logoutHandler}>Выйти</a></li>
                         </ul>
                 :   <ul id="nav-mobile" className="right hide-on-med-and-down">
-                        <li><NavLink to={'/library'}>Найти книгу</NavLink></li>
+                        <li><NavLink to={'/library'}>Онлайн каталог</NavLink></li>
                         <li><NavLink to={'/auth'}>Войти</NavLink></li>
                     </ul>}
                 

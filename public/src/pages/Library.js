@@ -1,6 +1,6 @@
 import React, { Fragment, useCallback, useState, useEffect } from 'react';
 import { Search } from '../components/Search';
-import { Plate } from '../components/Plate';
+import { DetailBookPlate } from '../components/DetailBookPlate';
 import { Loader } from '../components/Loader';
 import { Pagination } from '../components/Pagination';
 import { useHttp } from '../hooks/http.hook';
@@ -40,7 +40,7 @@ export function Library() {
         <Fragment>
             <Search />
             <hr/>
-            { !loading && data && <Plate books={ data.books } pressHandler={ pressHandler } />}
+            { !loading && data && <DetailBookPlate books={ data.books } pressHandler={ pressHandler } />}
             { !loading && data && <Pagination />}
         </Fragment>
     );

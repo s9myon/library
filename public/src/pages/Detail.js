@@ -8,7 +8,7 @@ import { useMessage } from '../hooks/message.hook';
 
 export function Detail() {
     const { request, loading, error, clearError } = useHttp();
-    const [book, setBook] = useState(null);
+    const [instances, setInstances] = useState(null);
     const { isAuth, type, token } = useContext(AuthContext);
     const message = useMessage();
     // берём параметр из get запроса
@@ -22,18 +22,15 @@ export function Detail() {
     const getBook = useCallback(async () => {
         try {
             const result = await request(`/book/details/${bookId}`, 'GET', null);
-            setBook(result.data);
+            setInstances(result.data);
         } catch(e) {
 
         }
     }, [bookId, request]);
 
     async function addWishHandler(event) {
-        console.log(event.target.id);
         try {
-
-            const result = await request(`/book/wish/addwish`, 'POST', { book: book.book, token });
-            console.log(result);
+            await request(`/book/wish/addwish`, 'POST', { instance: { id: event.target.id }, token });
         } catch(e) {
 
         }
@@ -49,13 +46,14 @@ export function Detail() {
 
     return(
         <Fragment>
-            { !loading && book &&
+            { !loading && instances &&
             <BookCard
-                book={ book }
+                instances={ instances }
                 addWishHandler={ addWishHandler }
                 isAuth={ isAuth }
                 type={ type }
-                />}
+                />
+            }
         </Fragment>
     );
 };

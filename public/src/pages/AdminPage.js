@@ -3,6 +3,7 @@ import { AddBooks } from '../components/AddBooks';
 import { useHttp } from '../hooks/http.hook';
 import { AuthContext } from '../context/auth.context';
 import { useMessage } from '../hooks/message.hook';
+import { GivingBook } from '../components/GivingBook';
 
 export function AdminPage() {
     const { request, error, setError, clearError } = useHttp();
@@ -12,7 +13,11 @@ export function AdminPage() {
         book: '',
         name: '',
         surname: '',
-        middleName: ''
+        middleName: '',
+        yearOfIssue: '',
+        publishingHouse: '',
+        email: '',
+        bookId: ''
     });
 
     useEffect(() => {
@@ -27,14 +32,13 @@ export function AdminPage() {
 
     async function bookFormHandler() {
         try {
-            const { book, name, surname, middleName } = form;
-            if(book && name && surname) {
-                const result = await request(
+            const { book, name, surname, middleName, yearOfIssue, publishingHouse } = form;
+            if(book && name && surname && middleName && yearOfIssue && publishingHouse) {
+                await request(
                     '/book/admin/addbook',
                     'POST',
-                    { book, author: { name, surname, middleName }, token }
+                    { book, author: { name, surname, middleName }, yearOfIssue, publishingHouse, token }
                 );
-                console.log(result);
             } else {
                 setError('Заполните все поля');
             }
@@ -42,8 +46,29 @@ export function AdminPage() {
 
         }
     }
+
+    
+    async function giveBookHandler(event) {
+        try {
+            const { email, bookId } = form;
+            if(email && bookId) {
+                await request(`/book/admin/updateinstance`, 'POST', {
+                    user: { email: email },
+                    instance: { id: bookId },
+                    token
+                });
+            }
+        } catch(e) {
+
+        }
+    }
+    
     return (
         <div>
+            <GivingBook
+                giveBookHandler = {() => giveBookHandler()}
+                updateForm = {(field, value) => updateForm(field, value)}
+            />
             <AddBooks
                 bookFormHandler = {() => bookFormHandler()}
                 updateForm = {(field, value) => updateForm(field, value)}

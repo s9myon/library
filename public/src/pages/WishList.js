@@ -7,23 +7,25 @@ import { AuthContext } from '../context/auth.context';
 export function WishList() {
     const { request, loading } = useHttp();
     const { token } = useContext(AuthContext);
-    const [data, setData] = useState(null);
+    const [wishes, setWishes] = useState(null);
 
     const getWishList = useCallback(async () => {
         try {
             const result = await request(`/book/wish/${token}`, 'GET', null);
-            setData(result.data);
+            setWishes(result.data);
+            console.log(result.data);
         } catch(e) {
 
         }
     }, [request, token]);
 
-    function deleteWishHandler(event) {
-        console.log(event);
+    const deleteWishHandler = useCallback(async(event) => {
         if(event.target.id) {
-            console.log(event.target.id);
+            const result = await request('/book/wish/delete', 'POST', { instance: { id: event.target.id }, token });
+            setWishes(result.data);
+            console.log(result.data);
         }
-    }
+    }, [request, token]);
 
     useEffect(() => {
         getWishList();
@@ -42,14 +44,14 @@ export function WishList() {
                           <span className="card-title">Лист ожидания</span>
                           <p>
                             Здесь находятся книги, которые вы добавитли в лист ожидания.
-                            Если экземпляр книги будет доступен в библиотеке, то мы вам скажем об этом.
+                            Если издание книги будет доступно в библиотеке, то мы вам скажем об этом.
                           </p>
                         </div>
                     </div>
                 </div>
             </div>
             <hr/>
-            { !loading && data && <WishPlate wish={ data } pressHandler={ deleteWishHandler } />}
+            { !loading && wishes && <WishPlate wishes={ wishes } pressHandler={ deleteWishHandler } />}
         </Fragment>
     );
 }

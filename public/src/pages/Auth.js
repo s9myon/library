@@ -20,19 +20,16 @@ export function Auth(){
 
     function changeHandler(event) {
         setForm({ ...form, [event.target.name]: event.target.value });
-        console.log(form);
     }
 
     async function loginHandler() {
         try {
-            console.log(form);
             const { email, password } = form;
             if (email && password) {
                 const random = Math.random();
                 const hash = md5(md5(email + password) + random);
                 const result = await request('/user/login', 'POST', { email: email, hash: hash, random: random });
                 auth.login(result.data.id, result.data.token, result.data.type);
-                console.log(result);
             } else {
                 setError('Заполните все поля');
             }

@@ -7,10 +7,11 @@ import { Detail } from '../pages/Detail';
 import { Library } from '../pages/Library';
 import { AdminPage } from '../pages/AdminPage';
 import { WishList } from '../pages/WishList';
+import { UsersList } from '../pages/UsersList';
+import { UserDetail } from '../pages/UserDetail';
 
 export function useRoutes(isAuth, type) {
     if (isAuth) {
-        console.log(type);
         if (type === "admin") {
             return (
                 <Switch>
@@ -22,6 +23,12 @@ export function useRoutes(isAuth, type) {
                     </Route>
                     <Route path={'/detail/:id'} exact>
                         <Detail />
+                    </Route>
+                    <Route path={'/userdetail/:id'} exact>
+                        <UserDetail/>
+                    </Route>
+                    <Route path={'/userslist'} exact>
+                        <UsersList />
                     </Route>
                     
                     <Redirect to={'/admin'} />

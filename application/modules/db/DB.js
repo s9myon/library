@@ -1,5 +1,6 @@
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
+const { resolve } = require('path');
 
 class DB {
     constructor({ NAME }) {
@@ -33,6 +34,15 @@ class DB {
         return new Promise(resolve => this.db.serialize(() => {
             const query = "SELECT * FROM user WHERE token=?";
             this.db.get(query, [token], (err, row) => resolve(err ? null : row));
+        }));
+    }
+
+    getUserById(id) {
+        return new Promise(resolve => this.db.serialize(() => {
+            const query = `SELECT user.name, user.email
+            FROM user
+            WHERE user.id=?`;
+            this.db.get(query, [id], (err, row) => resolve(err ? null : row));
         }));
     }
 
@@ -87,6 +97,22 @@ class DB {
         }));
     }
 
+    getInstanceOfBookById(instanceId) {
+        return new Promise(resolve => this.db.serialize(() => {
+            const query = `SELECT instance.id, book.title, publishingHouse.title AS publishingHouse,
+            instance.yearOfIssue, user.name, instance.dateTaken
+            FROM instance
+            INNER JOIN book
+            ON instance.book = book.id
+            INNER JOIN publishingHouse
+            ON instance.publishingHouse = publishingHouse.id
+            LEFT JOIN user
+            ON instance.holder = user.id
+            WHERE instance.id=?`;
+            this.db.get(query, [instanceId], (err, row) => resolve(err ? null : row));
+        }));
+    }
+
     getInstancesOfBooksByHolderEmail(email) {
         return new Promise(resolve => this.db.serialize(() => {
             const query = `SELECT instance.id, book.title AS book,
@@ -104,9 +130,16 @@ class DB {
 
     getInstancesOfBookByBookTitle(book) {
         return new Promise(resolve => this.db.serialize(() => {
-            const query = `SELECT instance.id, instance.holder ,instance.dateTaken
+            const query = `SELECT instance.id, book.title, instance.yearOfIssue, publishingHouse.title AS publishingHouse,
+            author.surname, author.name, author.middleName, user.name AS holder, instance.dateTaken
             FROM instance INNER JOIN book
             ON instance.book = book.id
+            INNER JOIN author
+            ON book.author = author.id
+            INNER JOIN publishingHouse
+            ON instance.publishingHouse = publishingHouse.id
+            LEFT JOIN user
+            ON instance.holder = user.id
             WHERE book.title = ?`;
             this.db.all(query, [book], (err, row) => resolve(err ? null : row));
         }));
@@ -131,27 +164,49 @@ class DB {
 
     getWishListByUserId(userId) {
         return new Promise(resolve => this.db.serialize(() => {
-            const query = `SELECT wishList.id, user.name, book.title,
-            author.surname, author.name, author.middleName,
-            instance.dateTaken
+            const query = `SELECT instance.id, user.name, book.title,
+            author.surname, author.name, author.middleName, instance.dateTaken
             FROM wishList
             INNER JOIN user
             ON wishList.user = user.id
-            INNER JOIN book
-            ON wishList.book = book.id
             INNER JOIN instance
             ON book.id = instance.book
+			INNER JOIN book
+            ON wishList.book = instance.id
             INNER JOIN author
             ON book.author = author.id
             WHERE user.id = ?`;
             this.db.all(query, [userId], (err, row) => resolve(err ? null : row));
         }));
     }
+    
+    getPublishingHouseByTitle(title) {
+        return new Promise(resolve => this.db.serialize(() => {
+            const query = 'SELECT * FROM publishingHouse WHERE publishingHouse.title=?';
+            this.db.get(query, [title], (err, row) => resolve(err ? null : row));
+        }));
+    }
+
+    getUsersByUserType(userType) {
+        return new Promise(resolve => this.db.serialize(() => {
+            const query = `SELECT user.id, user.name, user.email
+            FROM user
+            INNER JOIN typeOfUser
+            ON user.type = typeOfUser.id
+            WHERE typeOfUser.type=?`;
+            this.db.all(query, [userType], (err, row) => resolve(err ? null : row));
+        }));
+    }
 
     // ADD
-    addWish(user, book) {
-        const query = "INSERT INTO wishList (user, book) VALUES (?, ?)";
-        this.db.run(query, [user, book]);
+    addWish(user, instance) {
+        const query = 'INSERT INTO wishList (user, book) VALUES (?, ?)';
+        this.db.run(query, [user, instance]);
+    }
+
+    addPublishingHouse(publishingHouse) {
+        const query = 'INSERT INTO publishingHouse (title) VALUES (?)';
+        this.db.run(query, [publishingHouse]);
     }
 
     addUser(email, password, name) {
@@ -164,9 +219,9 @@ class DB {
         this.db.run(query, [book, authorId]);
     }
 
-    addInstanceOfBook(bookId) {
-        const query = "INSERT INTO instance (book) VALUES (?)";
-        this.db.run(query, [bookId]);
+    addInstanceOfBook(bookId, yearOfIssue, publishingHouseId) {
+        const query = "INSERT INTO instance (book, yearOfIssue, publishingHouse) VALUES (?, ?, ?)";
+        this.db.run(query, [bookId, yearOfIssue, publishingHouseId]);
     }
 
     addAuthor(surname, name, middleName) {
@@ -174,16 +229,24 @@ class DB {
         this.db.run(query, [surname, name, middleName]);
     }
     
-    // SET
+    // UPDATE
     setToken(token, email) {
         const query = "UPDATE user SET token=? WHERE email=?";
         this.db.run(query, [token, email]);
     }
+
+    setHolderAndDateTakenOfInstanceByInstanceId(id, holder, dateTaken) {
+        const query = `UPDATE instance
+        SET holder=?, dateTaken=?
+        WHERE id=?`;
+        this.db.run(query, [holder, dateTaken, id]);
+    }
     
     // DELETE
-    deleteWishByBookId(bookId) {
-        const query = "DELETE FROM wishList WHERE wishList.book = ?";
-        this.db.run(query, [bookId]);
+    deleteWishByUserIdAndInstanceId(userId, instanceId) {
+        const query = `DELETE FROM wishList
+        WHERE wishList.user = ? AND wishList.book = ?`;
+        this.db.run(query, [userId, instanceId]);
     }
 }
 
