@@ -36,7 +36,6 @@ function deinitModules() {
 
 async function start() {
     try {
-
         server.listen(PORT, () => console.log(`Port is ${PORT}`));
         
     } catch (e) {

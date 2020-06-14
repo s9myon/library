@@ -11,7 +11,7 @@ export function Library() {
     const [data, setData] = useState(null);
     const history = useHistory();
     // количество записей на странице
-    let limit = 10;
+    let limit = 100;
     let offset = 0;
 
     const getLibraryBooks = useCallback( async () => {
@@ -41,7 +41,7 @@ export function Library() {
             <Search />
             <hr/>
             { !loading && data && <DetailBookPlate books={ data.books } pressHandler={ pressHandler } />}
-            { !loading && data && <Pagination />}
+            {/* { !loading && data && <Pagination />} */}
         </Fragment>
     );
 }
