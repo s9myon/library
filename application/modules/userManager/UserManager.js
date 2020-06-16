@@ -89,6 +89,11 @@ class UserManager extends BaseManager {
             } else {
                 // если ещё нет такого пользователя
                 await this.db.addUser(email, hash, name);
+                this.mediator.get(this.TRIGGERS.SEND_EMAIL, {
+                    reciever: email,
+                    subject: "Регистрация на сайте Библиотеки Онлайн",
+                    text: "Вы зарегестрировались на сайте Библиотеки Онлайн"
+                });
                 return true;
             }
         }

@@ -28,8 +28,7 @@ export function Registr(){
             if (email && password1 && password2 && name) {
                 if(password1 === password2) {
                     let hash = md5(email + password1);
-                    const data = await request('/user/register', 'POST', { email: email, hash: hash, name: name });
-                    console.log('Data', data);
+                    await request('/user/register', 'POST', { email: email, hash: hash, name: name });
                     history.push("/");
                 } else {
                     setError('Введите одинаковые пароли');

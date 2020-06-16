@@ -22,7 +22,6 @@ export function UsersList() {
     }, [request, token]);
 
     function pressHandler(event) {
-        console.log(event.target.id);
         history.push(`/userdetail/${event.target.id}`);
     }
 

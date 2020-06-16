@@ -2,7 +2,6 @@ import React, { Fragment } from 'react';
 import { InstancePlate } from './InstancePlate';
 
 export function BookCard({ instances, addWishHandler, isAuth, type }) {
-    console.log(instances);
     return (
         <Fragment>
             <div className="row">

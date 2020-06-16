@@ -4,14 +4,15 @@ const app = express();
 const server = http.createServer(app);
 
 // конфигурация
-const CONFIG = require('./config');
-const { PORT, DATABASE, TRIGGERS, EVENTS } = CONFIG;
+const CONFIG = require('./config/config');
+const { PORT, DATABASE, TRIGGERS, EVENTS, EMAIL, PASSWORD } = CONFIG;
 
 // классы модулей
 const Mediator = require('./application/modules/Mediator');
 const DB = require('./application/modules/db/DB');
 const UserManager = require('./application/modules/userManager/UserManager');
 const BookManager = require('./application/modules/bookManager/BookManager');
+const EmailManager = require('./application/modules/emailManager/EmailManager');
 
 // подключаем модули
 const mediator = new Mediator({ TRIGGERS, EVENTS });
@@ -19,6 +20,7 @@ const db = new DB(DATABASE);
 
 new UserManager({ mediator, db });
 new BookManager({ mediator, db });
+new EmailManager({ mediator, db, EMAIL, PASSWORD });
 
 //  подключаем роутеры
 const Router = require('./application/router/Router');

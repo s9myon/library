@@ -13,7 +13,6 @@ export function WishList() {
         try {
             const result = await request(`/book/wish/${token}`, 'GET', null);
             setWishes(result.data);
-            console.log(result.data);
         } catch(e) {
 
         }
@@ -23,7 +22,6 @@ export function WishList() {
         if(event.target.id) {
             const result = await request('/book/wish/delete', 'POST', { instance: { id: event.target.id }, token });
             setWishes(result.data);
-            console.log(result.data);
         }
     }, [request, token]);
 

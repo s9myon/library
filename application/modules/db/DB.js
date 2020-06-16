@@ -46,6 +46,17 @@ class DB {
         }));
     }
 
+    getUserEmailByHisWishInstanceId(instanceId) {
+        return new Promise(resolve => this.db.serialize(() => {
+            const query = `SELECT user.email
+            FROM wishList
+            INNER JOIN user
+            ON wishList.user = user.id
+            WHERE wishList.book = ?`;
+            this.db.get(query, [instanceId], (err, row) => resolve(err ? null : row))
+        }));
+    }
+
     getCountOfBooks() {
         return new Promise(resolve => this.db.serialize(() => {
             const query = `SELECT COUNT(*) AS count FROM book`;

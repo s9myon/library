@@ -2,7 +2,7 @@ import React, { Fragment, useCallback, useState, useEffect } from 'react';
 import { Search } from '../components/Search';
 import { DetailBookPlate } from '../components/DetailBookPlate';
 import { Loader } from '../components/Loader';
-import { Pagination } from '../components/Pagination';
+// import { Pagination } from '../components/Pagination';
 import { useHttp } from '../hooks/http.hook';
 import { useHistory } from 'react-router-dom';
 
@@ -24,7 +24,6 @@ export function Library() {
     }, [request, limit, offset]);
 
     function pressHandler(event) {
-        console.log(event.target.id);
         history.push(`/detail/${event.target.id}`);
     }
 

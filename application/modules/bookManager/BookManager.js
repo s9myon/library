@@ -129,6 +129,7 @@ class BookManager extends BaseManager {
             let user = this.mediator.get(this.TRIGGERS.GET_USER_BY_TOKEN, data.token);
             if(user.type === "admin") {
                 if (data.instance.id && data.user.email) {
+                    // если пользователь берёт книгу
                     let reader = await this.db.getUserByEmail(data.user.email);
                     let dateNow = new Date().toLocaleDateString();
                     await this.db.setHolderAndDateTakenOfInstanceByInstanceId(
@@ -138,11 +139,43 @@ class BookManager extends BaseManager {
                     );
                     return true;
                 } else if (data.instance.id && !data.instance.holder && !data.instance.dateTaken && data.user.id) {
+                    // если пользователь вовращает книгу в библиотеку
                     await this.db.setHolderAndDateTakenOfInstanceByInstanceId(
                         data.instance.id,
                         data.instance.holder,
                         data.instance.dateTaken
                     );
+                    // отправляем пользователям уведомление на почту о том что
+                    // книга из их листа ожидания вернулась в библиотеку
+                    let usersEmailWhoHaveThisInstanceInWish =
+                        await this.db.getUserEmailByHisWishInstanceId(data.instance.id);
+                    console.log("Экземпляр", data.instance.id)
+                    console.log("Пользователи которые имеют эту книгу в списке желаний", usersEmailWhoHaveThisInstanceInWish);
+                    if (Array.isArray(usersEmailWhoHaveThisInstanceInWish)) {
+                        console.log(usersEmailWhoHaveThisInstanceInWish);
+                        let recievers = null;
+                        let promises = usersEmailWhoHaveThisInstanceInWish.map(user => {
+                            if (recievers === null) {
+                                recievers = user.email;
+                            } else {
+                                recievers += ", " + user.email;
+                            }
+                        });
+                        await Promise.all(promises);
+                        console.log("Получатели: ", recievers)
+                        this.mediator.get(this.TRIGGERS.SEND_EMAIL, {
+                            reciever: recievers,
+                            subject: "Библиотека Онлайн",
+                            text: "Книга из вашего листа ожидания появилась в библиотеке"
+                        });
+                    } else {
+                        console.log("Получатель: ", usersEmailWhoHaveThisInstanceInWish.email);
+                        this.mediator.get(this.TRIGGERS.SEND_EMAIL, {
+                            reciever: usersEmailWhoHaveThisInstanceInWish.email,
+                            subject: "Библиотека Онлайн",
+                            text: "Книга из вашего листа ожидания появилась в библиотеке"
+                        });
+                    }
                     let reader = await this.db.getUserById(data.user.id);
                     let books = await this.db.getInstancesOfBooksByHolderEmail(reader.email);
                     return books ? books : null;
